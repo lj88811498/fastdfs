@@ -1,0 +1,35 @@
+docker run -d --network=host --name tracker -v /var/fdfs/tracker:/var/fdfs delron/fastdfs tracker
+
+docker run -d --network=host --name storage -e TRACKER_SERVER=172.16.24.203:22122 -v /var/fdfs/storage:/var/fdfs -e GROUP_NAME=group1 delron/fastdfs storage
+
+docker run -d --network=host --name storage2 -e TRACKER_SERVER=172.16.24.203:22123 -v /var/fdfs/storage2:/var/fdfs -e GROUP_NAME=group2 delron/fastdfs storage
+
+java集成：
+
+fdfs:
+  file-host: http://172.16.24.203:8888/
+  tracker-list:
+    - 172.16.24.203:22122
+  so-timeout: 5000
+  pool:
+    max-total: 200
+    max-total-per-key: 50
+    max-wait-millis: 5000
+
+
+web：
+http://172.16.24.203:8888/group1/M00/00/00/rBAYy1688ZiAeyLzAAB94FpItQY908.jpg
+
+
+docker内部上传：
+docker exec -it storage /bin/bash
+cd /var/fdfs
+/usr/bin/fdfs_upload_file /etc/fdfs/client.conf 1.png
+
+修改回显端口
+cd /etc/fdfs
+vi storage.conf
+ http.server_port=8888
+
+nginx配置文件地址：
+cd /usr/local/nginx/conf/nginx.conf
